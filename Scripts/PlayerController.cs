@@ -1,9 +1,17 @@
 using UnityEngine;
 using static UnityEngine.InputSystem.InputAction;
 
+public enum FacingDirection
+{
+    DOWN = 0,
+    UP = 1,
+    SIDE = 2
+}
+
 [
     RequireComponent(typeof(Rigidbody2D)),
     RequireComponent(typeof(SpriteRenderer)),
+    RequireComponent(typeof(Animator)),
     RequireComponent(typeof(Health)),
     RequireComponent(typeof(MeleeAttack))
 ]
@@ -11,8 +19,8 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed;
 
-
     private Rigidbody2D rb;
+    private Animator animator;
     private SpriteRenderer spriteRenderer;
     private Health health;
     private MeleeAttack meleeAttack;
@@ -25,6 +33,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         health = GetComponent<Health>();
         meleeAttack = GetComponent<MeleeAttack>();
@@ -45,13 +54,6 @@ public class PlayerController : MonoBehaviour
         health.OnDeath -= OnDeath;
     }
 
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Vector2 hitCenter = (Vector2)transform.position + facingDirection * 0.8f;
-        Gizmos.DrawWireSphere(hitCenter, 0.4f);
-    }
-
     void Update()
     {
         moveInput = inputSystem.Player.Move.ReadValue<Vector2>();
@@ -66,11 +68,28 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateFacing()
     {
-        if (moveInput.sqrMagnitude > 0.01f)
+        if (moveInput.sqrMagnitude < 0.01f) return;
+
+        Vector2 snapped = Mathf.Abs(moveInput.x) >= Mathf.Abs(moveInput.y) ?
+        new Vector2(Mathf.Sign(moveInput.x), 0)
+        : new Vector2(0, Mathf.Sign(moveInput.y));
+
+        if (snapped == facingDirection) return;
+
+        facingDirection = snapped;
+        UpdateAnimator();
+    }
+
+    private void UpdateAnimator()
+    {
+        int animationDirection = facingDirection switch
         {
-            facingDirection = moveInput.normalized;
-        }
+            var d when d == Vector2.down => (int)FacingDirection.DOWN,
+            var d when d == Vector2.up => (int)FacingDirection.UP,
+            _ => (int)FacingDirection.SIDE
+        };
         spriteRenderer.flipX = facingDirection.x < 0;
+        animator.SetInteger("direction", animationDirection);
     }
 
     private void OnAttack(CallbackContext action)

@@ -12,10 +12,19 @@ public class MeleeAttack : MonoBehaviour
     [SerializeField] private float cooldown;
 
     private bool isOnCooldown = false;
+    private Vector2 lastDirection = Vector2.down; // Cached for gizmo
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Vector2 hitCenter = (Vector2)transform.position + lastDirection * 0.8f;
+        Gizmos.DrawWireSphere(hitCenter, 0.4f);
+    }
 
     public void Attack(Vector2 direction)
     {
         if (isOnCooldown) return;
+        lastDirection = direction;
         StartCoroutine(AttackCoroutine(direction));
     }
 
