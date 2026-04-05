@@ -118,7 +118,15 @@ There is no neutral path. Every choice pulls the player in one direction.
 
 ## Gameplay
 
-**Style:** 2D top-down, real-time combat + stealth + exploration
+**Style:** 2D true top-down (bird's eye view), real-time combat + stealth + exploration — reference points: Hotline Miami, Darkwood
+
+**Perspective:** Camera looks straight down. Player sprite is designed from above. Player rotates freely to face the mouse cursor (360°). This enables a vision/FOV cone system that drives both atmosphere and stealth.
+
+**Field of View:** Player has a visible light/shadow cone extending from their facing direction. Outside the cone, the environment is darkened or obscured — creating tension, limiting information, and rewarding tactical play. Ferals outside the FOV are hidden until the player turns toward them (except Feral Sense, which warns regardless of facing).
+
+**Play Styles — both valid:**
+- *Rambo:* Run and attack, use Feral Sense to avoid being flanked, brute-force through encounters
+- *Tactical:* Use FOV cone to clear rooms methodically, avoid detection, conserve health
 
 **Enemies**
 - *Ferals:* Fast, erratic, semi-intelligent. Variants: stalkers, brutes, signalers
@@ -128,7 +136,7 @@ There is no neutral path. Every choice pulls the player in one direction.
 **Gameplay Pillars**
 1. Exploration (decayed ship)
 2. Combat (human + feral threats)
-3. Stealth (zones, patrols, sound/light)
+3. Stealth (FOV cone, sound, light — first-class, not an afterthought)
 4. Narrative choice (faction alignment)
 5. Progression (dual skill tree: Human vs Parasite)
 

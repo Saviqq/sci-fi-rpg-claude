@@ -49,7 +49,7 @@ Total: ~5–8 small rooms max
 ## 3. Combat
 
 **Player:**
-- Movement (WASD)
+- Movement (WASD), player rotates to face mouse cursor (360°)
 - 1 melee weapon (pipe, tool)
 - Optional: dodge roll OR stamina bar
 
@@ -108,11 +108,12 @@ This sets the tone for the full game.
 
 | System | Notes |
 |--------|-------|
-| Player movement | WASD top-down |
-| Basic melee combat | 1 weapon, hit detection |
+| Player movement | WASD, player rotates to face mouse (360°) |
+| Field of View | Light/shadow cone from player facing; darkens outside cone |
+| Basic melee combat | 1 weapon, hit detection in facing direction |
 | 1 enemy AI | Feral — erratic movement, burst attack |
 | Simple health system | |
-| Feral Sense | Proximity warning (visual/audio cue) |
+| Feral Sense | Proximity warning (visual/audio cue) — fires regardless of FOV |
 | Basic dialogue UI | Choice list, 1 NPC |
 | Interact system | E key — logs, doors, NPCs |
 | Scene transitions | Doors between rooms |
@@ -125,8 +126,9 @@ Skill tree, inventory, multiple weapons, complex AI, multiple factions, environm
 
 ## 8. Art Style
 
-- 2D pixel-art, top-down
+- 2D pixel-art, true top-down (bird's eye) — sprites designed from above
 - Dark sci-fi, strong lighting contrast
+- FOV cone + ambient darkness is a core visual element — not just atmosphere, it's gameplay
 - Use placeholder shapes / asset store packs — don't overthink for the vertical slice
 
 ---
@@ -143,10 +145,10 @@ Audio will carry atmosphere hard.
 
 | Week | Focus |
 |------|-------|
-| 1 | Movement + camera + basic combat |
-| 2 | Enemy AI + level blockout |
-| 3 | Feral Sense + UI basics |
-| 4 | Dialogue system + story elements |
+| 1 | Movement (WASD + mouse rotation) + camera + basic combat |
+| 2 | Field of View system + level blockout |
+| 3 | Enemy AI + Feral Sense |
+| 4 | Dialogue system + story elements + UI basics |
 | 5–6 | Polish + audio + bug fixes |
 
 ---
