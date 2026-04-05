@@ -1,17 +1,9 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static UnityEngine.InputSystem.InputAction;
-
-public enum FacingDirection
-{
-    DOWN = 0,
-    UP = 1,
-    SIDE = 2
-}
 
 [
     RequireComponent(typeof(Rigidbody2D)),
-    RequireComponent(typeof(SpriteRenderer)),
-    RequireComponent(typeof(Animator)),
     RequireComponent(typeof(Health)),
     RequireComponent(typeof(MeleeAttack))
 ]
@@ -19,22 +11,19 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed;
 
+    private Camera mainCamera;
     private Rigidbody2D rb;
-    private Animator animator;
-    private SpriteRenderer spriteRenderer;
     private Health health;
     private MeleeAttack meleeAttack;
     private InputSystem inputSystem;
 
     private Vector2 moveInput;
-    private Vector2 facingDirection = Vector2.down;
     private bool canMove = true;
 
     void Awake()
     {
+        mainCamera = Camera.main;
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
         health = GetComponent<Health>();
         meleeAttack = GetComponent<MeleeAttack>();
         inputSystem = new InputSystem();
@@ -57,7 +46,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         moveInput = inputSystem.Player.Move.ReadValue<Vector2>();
-        UpdateFacing();
+        UpdateRotation();
     }
 
     void FixedUpdate()
@@ -66,35 +55,17 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = moveInput * moveSpeed;
     }
 
-    private void UpdateFacing()
+    private void UpdateRotation()
     {
-        if (moveInput.sqrMagnitude < 0.01f) return;
-
-        Vector2 snapped = Mathf.Abs(moveInput.x) >= Mathf.Abs(moveInput.y) ?
-        new Vector2(Mathf.Sign(moveInput.x), 0)
-        : new Vector2(0, Mathf.Sign(moveInput.y));
-
-        if (snapped == facingDirection) return;
-
-        facingDirection = snapped;
-        UpdateAnimator();
-    }
-
-    private void UpdateAnimator()
-    {
-        int animationDirection = facingDirection switch
-        {
-            var d when d == Vector2.down => (int)FacingDirection.DOWN,
-            var d when d == Vector2.up => (int)FacingDirection.UP,
-            _ => (int)FacingDirection.SIDE
-        };
-        spriteRenderer.flipX = facingDirection.x < 0;
-        animator.SetInteger("direction", animationDirection);
+        Vector3 mouseWorld = mainCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        Vector2 dir = mouseWorld - transform.position;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
     private void OnAttack(CallbackContext action)
     {
-        meleeAttack.Attack(facingDirection);
+        meleeAttack.Attack();
     }
 
     private void OnDeath()
